@@ -42,6 +42,8 @@ namespace ITOTicketManagementSystem.Models
         public virtual IdentityUser? Owner { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+        public virtual ICollection<TicketHistory> History { get; set; } = new List<TicketHistory>();
     }
 
 }

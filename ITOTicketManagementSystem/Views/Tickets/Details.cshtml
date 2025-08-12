@@ -62,6 +62,26 @@
         </form>
     </div>
     <div class="col-md-6">
-        <h4>History</h4>
+        @if (User.IsInRole("Help Desk Team") || User.IsInRole("Admin"))
+        {
+            <hr />
+            <h4>Manage Ticket</h4>
+            <div class="card bg-light">
+                <div class="card-body">
+                    <form asp-action="UpdateStatus" method="post">
+                        <input type="hidden" name="ticketId" value="@Model.Id" />
+                        <div class="form-row align-items-end">
+                            <div class="form-group col-md-6">
+                                <label for="status">Change Status</label>
+                                <select name="status" class="form-control" asp-items="Html.GetEnumSelectList<ITOTicketManagementSystem.Models.TicketStatus>()"></select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <button type="submit" class="btn btn-success">Update Status</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
     </div>
 </div>
