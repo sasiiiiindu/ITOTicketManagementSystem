@@ -116,6 +116,8 @@ namespace ITOTicketManagementSystem.Controllers
             // Find the ticket by its ID, and include the Owner's details
             var ticket = await _context.Tickets
                 .Include(t => t.Owner)
+                .Include(t => t.Comments)
+                    .ThenInclude(c => c.Author) // For each comment, include its author
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (ticket == null)
@@ -125,5 +127,30 @@ namespace ITOTicketManagementSystem.Controllers
 
             return View(ticket);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddComment(int ticketId, string content)
+        {
+            if (string.IsNullOrEmpty(content))
+            {
+                // Optional: Add error handling if the comment is empty
+                return RedirectToAction("Details", new { id = ticketId });
+            }
+
+            var newComment = new Models.Comment
+            {
+                Content = content,
+                TicketId = ticketId,
+                AuthorId = _userManager.GetUserId(User),
+                CreatedDate = DateTime.UtcNow
+            };
+
+            _context.Comments.Add(newComment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = ticketId });
+        }
+
     }
 }

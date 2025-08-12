@@ -11,6 +11,7 @@ namespace ITOTicketManagementSystem.Data
         {
         }
 
-        public DbSet<Ticket> Tickets { get; set; } // This is the line you added
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Comment> Comments { get; set; }
     }
 }

@@ -40,5 +40,8 @@ namespace ITOTicketManagementSystem.Models
         }
         public string? OwnerId { get; set; }
         public virtual IdentityUser? Owner { get; set; }
+
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
+
 }

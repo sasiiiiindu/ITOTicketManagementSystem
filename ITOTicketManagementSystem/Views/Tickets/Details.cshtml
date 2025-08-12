@@ -39,6 +39,27 @@
 <div class="row">
     <div class="col-md-6">
         <h4>Comments</h4>
+        <ul class="list-group">
+            @foreach (var comment in Model.Comments.OrderBy(c => c.CreatedDate))
+            {
+                <li class="list-group-item">
+                    <p>@comment.Content</p>
+                    <small class="text-muted">
+                        By: @comment.Author.Email on @comment.CreatedDate.ToLocalTime().ToString("g")
+                    </small>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="mt-4">
+        <h5>Add a new comment</h5>
+        <form asp-action="AddComment" method="post">
+            <input type="hidden" name="ticketId" value="@Model.Id" />
+            <div class="form-group">
+                <textarea name="content" class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Submit Comment</button>
+        </form>
     </div>
     <div class="col-md-6">
         <h4>History</h4>
