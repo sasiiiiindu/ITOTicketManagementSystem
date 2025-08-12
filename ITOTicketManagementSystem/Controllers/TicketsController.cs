@@ -104,5 +104,26 @@ namespace ITOTicketManagementSystem.Controllers
             // If the model is not valid, return the view with the entered data
             return View(viewModel);
         }
+
+        // GET: Tickets/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            // Find the ticket by its ID, and include the Owner's details
+            var ticket = await _context.Tickets
+                .Include(t => t.Owner)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            return View(ticket);
+        }
     }
 }

@@ -30,7 +30,7 @@ else
                     <td>@ticket.Status</td>
                     <td>@ticket.CreatedDate.ToLocalTime().ToString("g")</td>
                     <td>
-                        <a href="#" class="btn btn-primary btn-sm">View Details</a>
+                        <a asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-primary btn-sm">View Details</a>
                     </td>
                 </tr>
             }
