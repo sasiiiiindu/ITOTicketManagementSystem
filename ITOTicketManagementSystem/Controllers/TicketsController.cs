@@ -34,6 +34,18 @@ namespace ITOTicketManagementSystem.Controllers
             return View(userTickets);
         }
 
+        [Authorize(Roles = "Help Desk Team, Admin")]
+        public async Task<IActionResult> HelpDeskView()
+        {
+            var newTickets = await _context.Tickets
+                                        .Include(t => t.Owner)
+                                        .Where(t => t.Status == Models.TicketStatus.New)
+                                        .OrderBy(t => t.CreatedDate)
+                                        .ToListAsync();
+
+            return View(newTickets);
+        }
+
         // GET: Tickets/Create
         public IActionResult Create()
         {
