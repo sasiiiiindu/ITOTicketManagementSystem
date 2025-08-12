@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITOTicketManagementSystem.Controllers
 {
@@ -19,9 +20,18 @@ namespace ITOTicketManagementSystem.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            // Get the ID of the currently logged-in user
+            var userId = _userManager.GetUserId(User);
+
+            // Retrieve only the tickets owned by that user
+            var userTickets = await _context.Tickets
+                                            .Where(t => t.OwnerId == userId)
+                                            .OrderByDescending(t => t.CreatedDate)
+                                            .ToListAsync();
+
+            return View(userTickets);
         }
 
         // GET: Tickets/Create
@@ -67,7 +77,7 @@ namespace ITOTicketManagementSystem.Controllers
                     AttachmentPath = uniqueFileName, // Save only the file name
                     Status = Models.TicketStatus.New,
                     CreatedDate = DateTime.UtcNow,
-                    // We'll add the user ID here in a future step
+                    OwnerId = _userManager.GetUserId(User)
                 };
 
                 // --- 3. Save to Database ---

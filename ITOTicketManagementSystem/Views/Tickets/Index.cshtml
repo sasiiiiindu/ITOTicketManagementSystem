@@ -1,12 +1,39 @@
-﻿@{
+﻿@model IEnumerable<ITOTicketManagementSystem.Models.Ticket>
+
+@{
     ViewData["Title"] = "My Tickets";
 }
-
-<div class="alert alert-success" role="alert">
-    Your ticket has been created successfully!
-</div>
 
 <h2>@ViewData["Title"]</h2>
 <hr />
 
-<p>This page to show a list of submitted tickets.</p>
+@if (!Model.Any())
+{
+    <p>You have not created any tickets yet.</p>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Created On</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model)
+            {
+                <tr>
+                    <td>@ticket.Title</td>
+                    <td>@ticket.Status</td>
+                    <td>@ticket.CreatedDate.ToLocalTime().ToString("g")</td>
+                    <td>
+                        <a href="#" class="btn btn-primary btn-sm">View Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

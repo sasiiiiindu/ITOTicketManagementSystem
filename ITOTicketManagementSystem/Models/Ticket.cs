@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace ITOTicketManagementSystem.Models
 {
@@ -37,5 +38,7 @@ namespace ITOTicketManagementSystem.Models
             Status = TicketStatus.New;
             CreatedDate = DateTime.UtcNow;
         }
+        public string? OwnerId { get; set; }
+        public virtual IdentityUser? Owner { get; set; }
     }
 }
