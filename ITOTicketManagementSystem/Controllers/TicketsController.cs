@@ -1,0 +1,86 @@
+﻿using ITOTicketManagementSystem.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ITOTicketManagementSystem.Controllers
+{
+    [Authorize] // This ensures only logged-in users can access this controller
+    public class TicketsController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public TicketsController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IWebHostEnvironment webHostEnvironment)
+        {
+            _context = context;
+            _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
+        }
+
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        // GET: Tickets/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Tickets/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Models.ViewModels.CreateTicketViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                string? uniqueFileName = null; // Can be null if no file is uploaded
+
+                // --- 1. Handle the file upload ---
+                if (viewModel.Attachment != null)
+                {
+                    // The folder to store the attachments in
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "attachments");
+
+                    // Create the folder if it doesn't exist
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    // Create a unique file name to avoid conflicts
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + viewModel.Attachment.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    // Save the file to the server
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await viewModel.Attachment.CopyToAsync(fileStream);
+                    }
+                }
+
+                // --- 2. Create the Ticket object ---
+                var ticket = new Models.Ticket
+                {
+                    Title = viewModel.Title,
+                    Description = viewModel.Description,
+                    AttachmentPath = uniqueFileName, // Save only the file name
+                    Status = Models.TicketStatus.New,
+                    CreatedDate = DateTime.UtcNow,
+                    // We'll add the user ID here in a future step
+                };
+
+                // --- 3. Save to Database ---
+                _context.Add(ticket);
+                await _context.SaveChangesAsync();
+
+                // --- 4. Redirect the user ---
+                // We'll redirect to a "My Tickets" page later. For now, we redirect to Index.
+                return RedirectToAction(nameof(Index));
+            }
+
+            // If the model is not valid, return the view with the entered data
+            return View(viewModel);
+        }
+    }
+}
