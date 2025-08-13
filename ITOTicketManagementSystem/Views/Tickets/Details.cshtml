@@ -62,7 +62,7 @@
         </form>
     </div>
     <div class="col-md-6">
-        @if (User.IsInRole("Help Desk Team") || User.IsInRole("Admin"))
+        @if (User.IsInRole("Help Desk Team") || User.IsInRole("Admin") || User.IsInRole("Engineering Team"))
         {
             <hr />
             <h4>Manage Ticket</h4>

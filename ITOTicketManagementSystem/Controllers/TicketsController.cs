@@ -46,6 +46,18 @@ namespace ITOTicketManagementSystem.Controllers
             return View(newTickets);
         }
 
+        [Authorize(Roles = "Engineering Team, Admin")]
+        public async Task<IActionResult> EngineeringView()
+        {
+            var assignedTickets = await _context.Tickets
+                                            .Include(t => t.Owner)
+                                            .Where(t => t.CurrentAssignee == Models.AssigneeType.Engineering)
+                                            .OrderBy(t => t.CreatedDate)
+                                            .ToListAsync();
+
+            return View(assignedTickets);
+        }
+
         // GET: Tickets/Create
         public IActionResult Create()
         {
@@ -156,7 +168,7 @@ namespace ITOTicketManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Help Desk Team, Admin")]
+        [Authorize(Roles = "Help Desk Team, Admin, Engineering Team")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateStatus(int ticketId, Models.TicketStatus status)
         {

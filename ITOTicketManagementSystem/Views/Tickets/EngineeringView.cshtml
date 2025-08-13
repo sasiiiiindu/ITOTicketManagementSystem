@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ITOTicketManagementSystem.Models.Ticket>
+
+@{
+    ViewData["Title"] = "Engineering - Assigned Tickets";
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+
+@if (!Model.Any())
+{
+    <p>There are currently no tickets assigned to the Engineering Team.</p>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Title</th>
+                <th>Submitted By</th>
+                <th>Created On</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model)
+            {
+                <tr>
+                    <td>@ticket.Title</td>
+                    <td>@(ticket.Owner?.Email ?? "N/A")</td>
+                    <td>@ticket.CreatedDate.ToLocalTime().ToString("g")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-primary btn-sm">View Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
