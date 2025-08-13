@@ -39,7 +39,7 @@ namespace ITOTicketManagementSystem.Controllers
         {
             var newTickets = await _context.Tickets
                                         .Include(t => t.Owner)
-                                        .Where(t => t.Status == Models.TicketStatus.New)
+                                        .Where(t => t.CurrentAssignee == Models.AssigneeType.HelpDesk)
                                         .OrderBy(t => t.CreatedDate)
                                         .ToListAsync();
 
@@ -89,7 +89,8 @@ namespace ITOTicketManagementSystem.Controllers
                     AttachmentPath = uniqueFileName, // Save only the file name
                     Status = Models.TicketStatus.New,
                     CreatedDate = DateTime.UtcNow,
-                    OwnerId = _userManager.GetUserId(User)
+                    OwnerId = _userManager.GetUserId(User),
+                    CurrentAssignee = Models.AssigneeType.HelpDesk
                 };
 
                 // --- 3. Save to Database ---
@@ -182,6 +183,41 @@ namespace ITOTicketManagementSystem.Controllers
             _context.Update(ticket);
 
             // --- 3. Save Changes ---
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = ticketId });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Help Desk Team, Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignToEngineering(int ticketId)
+        {
+            var ticket = await _context.Tickets.FindAsync(ticketId);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            // --- 1. Create a History Record for the assignment change ---
+            var historyRecord = new Models.TicketHistory
+            {
+                TicketId = ticket.Id,
+                PropertyChanged = "Assignee",
+                OldValue = ticket.CurrentAssignee.ToString(),
+                NewValue = Models.AssigneeType.Engineering.ToString(),
+                ChangedDate = DateTime.UtcNow,
+                UserId = _userManager.GetUserId(User)
+            };
+            _context.History.Add(historyRecord);
+
+            // --- 2. Update the Ticket's Assignee ---
+            ticket.CurrentAssignee = Models.AssigneeType.Engineering;
+
+            // Optional: Also change status to InProgress when assigning
+            ticket.Status = Models.TicketStatus.InProgress;
+
+            _context.Update(ticket);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Details", new { id = ticketId });

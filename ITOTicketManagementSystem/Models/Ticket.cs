@@ -12,6 +12,13 @@ namespace ITOTicketManagementSystem.Models
         Closed
     }
 
+    // This defines the possible teams a ticket can be assigned to
+    public enum AssigneeType
+    {
+        HelpDesk,
+        Engineering
+    }
+
     public class Ticket
     {
         [Key] // This marks the Id property as the primary key
@@ -44,6 +51,8 @@ namespace ITOTicketManagementSystem.Models
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
         public virtual ICollection<TicketHistory> History { get; set; } = new List<TicketHistory>();
+
+        public AssigneeType CurrentAssignee { get; set; }
     }
 
 }

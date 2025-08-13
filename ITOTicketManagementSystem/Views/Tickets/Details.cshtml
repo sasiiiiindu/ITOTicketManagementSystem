@@ -80,6 +80,10 @@
                             </div>
                         </div>
                     </form>
+                    <form asp-action="AssignToEngineering" method="post" class="mt-3">
+                        <input type="hidden" name="ticketId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-warning">Assign to Engineering Team</button>
+                    </form>
                 </div>
             </div>
         }
