@@ -12,7 +12,7 @@ namespace ITOTicketManagementSystem.Models
         public int TicketId { get; set; }
         public virtual Ticket Ticket { get; set; }
 
-        // What property was changed (e.g., "Status", "Assigned To")
+        // What property was changed
         public string PropertyChanged { get; set; }
 
         public string OldValue { get; set; }
