@@ -20,3 +20,44 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* --- Timeline CSS --- */
+.timeline {
+    list-style: none;
+    padding: 1rem 0;
+    margin: 0;
+    border-left: 2px solid #e9ecef;
+    position: relative;
+}
+
+.timeline-item {
+    position: relative;
+    margin-left: 30px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .timeline-item::before {
+        content: '';
+        background-color: #fff;
+        border: 2px solid #0d6efd; /* Blue dot */
+        border-radius: 50%;
+        position: absolute;
+        left: -39px; /* Position the dot on the timeline bar */
+        top: 4px;
+        width: 15px;
+        height: 15px;
+        z-index: 1;
+    }
+
+.timeline-item-content {
+    position: relative;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: .25rem;
+}

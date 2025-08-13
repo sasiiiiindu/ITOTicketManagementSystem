@@ -87,23 +87,29 @@
                 </div>
             </div>
         }
-        <ul class="list-group">
+        <div class="timeline">
             @foreach (var historyItem in Model.History.OrderBy(h => h.ChangedDate))
             {
-                <li class="list-group-item">
-                    <p class="mb-0">
-                        <strong>@historyItem.PropertyChanged</strong> was changed from
-                        <strong>"@historyItem.OldValue"</strong> to <strong>"@historyItem.NewValue"</strong>.
-                    </p>
-                    <small class="text-muted">
-                        By: @historyItem.User.Email on @historyItem.ChangedDate.ToLocalTime().ToString("g")
-                    </small>
-                </li>
+                <div class="timeline-item">
+                    <div class="timeline-item-content">
+                        <p class="mb-0">
+                            <strong>@historyItem.PropertyChanged</strong> was changed from
+                            <strong>"@historyItem.OldValue"</strong> to <strong>"@historyItem.NewValue"</strong>.
+                        </p>
+                        <small class="text-muted">
+                            By: @historyItem.User.Email on @historyItem.ChangedDate.ToLocalTime().ToString("g")
+                        </small>
+                    </div>
+                </div>
             }
             @if (!Model.History.Any())
             {
-                <li class="list-group-item">No changes have been logged for this ticket yet.</li>
+                <div class="timeline-item">
+                    <div class="timeline-item-content">
+                        No changes have been logged for this ticket yet.
+                    </div>
+                </div>
             }
-        </ul>
+        </div>
     </div>
 </div>
