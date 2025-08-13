@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace ITOTicketManagementSystem.Controllers
 {
@@ -56,6 +57,31 @@ namespace ITOTicketManagementSystem.Controllers
                                             .ToListAsync();
 
             return View(assignedTickets);
+        }
+
+        [Authorize(Roles = "Help Desk Team, Admin")]
+        public async Task<IActionResult> ExportToCsv()
+        {
+            // 1. Fetch the data to be exported (same query as HelpDeskView)
+            var tickets = await _context.Tickets
+                                    .Include(t => t.Owner)
+                                    .Where(t => t.CurrentAssignee == Models.AssigneeType.HelpDesk)
+                                    .OrderBy(t => t.CreatedDate)
+                                    .ToListAsync();
+
+            // 2. Build the CSV content using StringBuilder for efficiency
+            var builder = new StringBuilder();
+            builder.AppendLine("Id,Title,Status,CreatedDate,OwnerEmail"); // CSV Header
+
+            // 3. Add a row for each ticket
+            foreach (var ticket in tickets)
+            {
+                var ownerEmail = ticket.Owner?.Email ?? "N/A";
+                builder.AppendLine($"{ticket.Id},\"{ticket.Title}\",{ticket.Status},{ticket.CreatedDate:yyyy-MM-dd HH:mm:ss},\"{ownerEmail}\"");
+            }
+
+            // 4. Return the CSV as a downloadable file
+            return File(Encoding.UTF8.GetBytes(builder.ToString()), "text/csv", $"helpdesk-tickets-{DateTime.UtcNow:yyyy-MM-dd}.csv");
         }
 
         // GET: Tickets/Create

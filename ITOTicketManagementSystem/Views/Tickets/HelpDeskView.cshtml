@@ -7,6 +7,10 @@
 <h2>@ViewData["Title"]</h2>
 <hr />
 
+<div class="mb-3">
+    <a asp-action="ExportToCsv" class="btn btn-secondary">Export to CSV</a>
+</div>
+
 @if (!Model.Any())
 {
     <p>There are currently no new tickets.</p>
