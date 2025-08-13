@@ -83,5 +83,23 @@
                 </div>
             </div>
         }
+        <ul class="list-group">
+            @foreach (var historyItem in Model.History.OrderBy(h => h.ChangedDate))
+            {
+                <li class="list-group-item">
+                    <p class="mb-0">
+                        <strong>@historyItem.PropertyChanged</strong> was changed from
+                        <strong>"@historyItem.OldValue"</strong> to <strong>"@historyItem.NewValue"</strong>.
+                    </p>
+                    <small class="text-muted">
+                        By: @historyItem.User.Email on @historyItem.ChangedDate.ToLocalTime().ToString("g")
+                    </small>
+                </li>
+            }
+            @if (!Model.History.Any())
+            {
+                <li class="list-group-item">No changes have been logged for this ticket yet.</li>
+            }
+        </ul>
     </div>
 </div>

@@ -118,6 +118,8 @@ namespace ITOTicketManagementSystem.Controllers
                 .Include(t => t.Owner)
                 .Include(t => t.Comments)
                     .ThenInclude(c => c.Author) // For each comment, include its author
+                .Include(t => t.History)
+                    .ThenInclude(h => h.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (ticket == null)
